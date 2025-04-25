@@ -4,9 +4,12 @@ import { Document } from 'mongoose';
 
 export type UserDocument = User & Document;
 
-@Schema()
+@Schema({ timestamps: true, _id: true })
 export class User {
-  @Prop({ required: true })
+  @Prop({ required: false })
+  _id: string;
+
+  @Prop({ required: true, unique: true })
   name: string;
 
   @Prop()

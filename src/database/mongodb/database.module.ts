@@ -9,9 +9,12 @@ import { MongooseModule } from '@nestjs/mongoose';
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (config: ConfigService) => ({
-        uri: config.get<string>('MONGO_URI'),
-      }),
+      useFactory: (config: ConfigService) => {
+        const uri = config.get<string>('MONGO_URI');
+        return {
+          uri,
+        };
+      },
       inject: [ConfigService],
     }),
   ],
