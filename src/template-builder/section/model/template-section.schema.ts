@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 
 export type TemplateSectionDocument = TemplateSection & Document;
 
@@ -10,6 +10,20 @@ export class TemplateSection {
 
   @Prop({ required: true, unique: true })
   name: string;
+
+  @Prop({
+    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Section',
+  })
+  parentSectionId: mongoose.Schema.Types.ObjectId;
+
+  @Prop({
+    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Template',
+  })
+  parentTemplateId: mongoose.Schema.Types.ObjectId;
 
   @Prop()
   description?: string;
