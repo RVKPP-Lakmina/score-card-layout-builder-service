@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Template, TemplateDocument } from 'src/template/template.schema';
+import { Template, TemplateDocument } from 'src/template-builder/template/template.schema';
 
 @Injectable()
 export class TemplateBuilderService {

@@ -1,6 +1,6 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
-import { Template } from 'src/template/template.schema';
-import { TemplateService } from 'src/template/template.service';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Template } from 'src/template-builder/template/template.schema';
+import { TemplateService } from './template/template.service';
 
 @Controller('template-builder')
 export class TemplateBuilderController {
@@ -16,18 +16,22 @@ export class TemplateBuilderController {
         return this.templateService.findAll();
     }
 
-    @Get(':name')
-    async findOne(@Param('name') name: string): Promise<Template | null> {
-        return this.templateService.findOne(name);
+    @Get()
+    async find(@Query('name') name?: string): Promise<Template | Template[] | null> {
+        if (name) {
+            return this.templateService.findOne(name);
+        }
+        return this.templateService.findAll();
     }
 
-    @Patch(':id')
-    async update(@Param('id') id: string, @Body() updateDto: Partial<Template>): Promise<Template> {
+    @Patch()
+    async updateByQuery(@Query('id') id: string, @Body() updateDto: Partial<Template>): Promise<Template> {
         return this.templateService.update(id, updateDto);
     }
 
-    @Delete(':id')
-    async delete(@Param('id') id: string): Promise<{ message: string }> {
+    @Delete()
+    async deleteByQuery(@Query('id') id: string): Promise<{ message: string }> {
         return this.templateService.delete(id);
     }
+
 }

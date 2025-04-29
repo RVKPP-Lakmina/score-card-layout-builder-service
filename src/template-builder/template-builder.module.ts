@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TemplateBuilderService } from './template-builder.service';
 import { TemplateBuilderController } from './template-builder.controller';
-import { Template, TemplateSchema } from 'src/template/template.schema';
+import { Template, TemplateSchema } from 'src/template-builder/template/template.schema';
 import { TemplateModule } from 'src/template/template.module';
-import { TemplateService } from 'src/template/template.service';
+import { TemplateService } from '../template-builder/template/template.service';
 
 @Module({
   imports: [MongooseModule.forFeature([{ name: Template.name, schema: TemplateSchema }]), TemplateModule],
