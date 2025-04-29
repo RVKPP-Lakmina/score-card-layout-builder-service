@@ -5,6 +5,7 @@ export const createSection = (name: string): TemplateSection => {
     _id: '1212121213d',
     name: name,
     description: '',
+
     overallWeight: 0,
     sectionWeight: 0,
     lastEditedBy: '',
