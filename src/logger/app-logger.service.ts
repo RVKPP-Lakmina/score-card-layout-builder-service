@@ -5,6 +5,36 @@ import * as cron from 'node-cron';
 import * as moment from 'moment';
 
 @Injectable()
+/**
+ * LoggerService is a custom logging service that implements the NestLoggerService interface.
+ * It provides methods for logging messages at various levels (INFO, ERROR, WARN, DEBUG, VERBOSE)
+ * and handles log file rotation on an hourly basis.
+ *
+ * ### Usage
+ * - `log(message: string, context?: string): void` - Logs an informational message.
+ * - `error(message: string, trace?: string, context?: string): void` - Logs an error message with an optional stack trace.
+ * - `warn(message: string, context?: string): void` - Logs a warning message.
+ * - `debug(message: string, context?: string): void` - Logs a debug message.
+ * - `verbose(message: string, context?: string): void` - Logs a verbose message.
+ *
+ * ### Parameters
+ * - `message` (string): Any string to be logged.
+ * - `trace` (string): The method name where the error occurred (optional, used in `error` method).
+ * - `context` (string): The file name or context of the log (optional).
+ *
+ * ### Features
+ * - Automatically creates log and archive directories if they do not exist.
+ * - Rotates log files every hour and archives the old log files.
+ * - Writes logs to a file with a timestamp, log level, context, and message.
+ *
+ * ### Example
+ * ```typescript
+ * const logger = new LoggerService();
+ * logger.log('Application started', 'app.ts');
+ * logger.error('Unhandled exception', 'mainMethod', 'app.ts');
+ * logger.warn('Deprecated API usage', 'api.ts');
+ * ```
+ */
 export class LoggerService implements NestLoggerService {
   private logStream: NodeJS.WritableStream;
   private currentLogFile: string;
@@ -61,14 +91,39 @@ export class LoggerService implements NestLoggerService {
     this.setupNewLogFile();
   }
 
+  /**
+   * Logs an error message with optional trace and context information.
+   *
+   * @param message - The error message or object to be logged.
+   * @param context - (Optional) A string representing the context or source of the error (File Name).
+   *
+   * This method writes the error details to the log with a severity level of 'ERROR'.
+   */
   log(message: any, context?: string): void {
     this.writeToLog('INFO', message, context);
   }
 
+  /**
+   * Logs an error message with optional trace and context information.
+   *
+   * @param message - The error message or object to be logged.
+   * @param trace - (Optional) A string representing the stack trace or additional trace information (method name or any).
+   * @param context - (Optional) A string representing the context or source of the error (File Name).
+   *
+   * This method writes the error details to the log with a severity level of 'ERROR'.
+   */
   error(message: any, trace?: string, context?: string): void {
     this.writeToLog('ERROR', message, context, trace);
   }
 
+  /**
+   * Logs an error message with optional trace and context information.
+   *
+   * @param message - The error message or object to be logged.
+   * @param context - (Optional) A string representing the context or source of the error (File Name).
+   *
+   * This method writes the error details to the log with a severity level of 'ERROR'.
+   */
   warn(message: any, context?: string): void {
     this.writeToLog('WARN', message, context);
   }
