@@ -7,9 +7,11 @@ import { TemplateBuilderController } from './template-builder/template-builder.c
 import { TemplateBuilderService } from './template-builder/template-builder.service';
 import { TemplateService } from './template-builder/template/template.service';
 import { TemplateBuilderModule } from './template-builder/template-builder.module';
+import { UtilityModule } from './utility/utility.module';
+import { LoggerModule } from './logger/logger.module';
 
 @Module({
-  imports: [ConnectionsModule, AuthModule, TemplateBuilderModule],
+  imports: [LoggerModule, UtilityModule, ConnectionsModule, AuthModule],
   controllers: [AppController, TemplateBuilderController],
   providers: [AppService, TemplateBuilderService, TemplateService],
 })

@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-export type UserDocument = User & Document;
+export type SectionDocument = Section & Document;
 
 @Schema({ timestamps: true, _id: true })
-export class User {
+export class Section {
   @Prop({ required: false })
   _id: string;
 
@@ -12,7 +12,16 @@ export class User {
   name: string;
 
   @Prop()
-  password: string;
+  description: string;
+
+  @Prop()
+  templateId: string;
+
+  @Prop()
+  lastEditedBy: string;
+
+  @Prop()
+  order: number;
 }
 
-export const UserSchema = SchemaFactory.createForClass(User);
+export const SectionSchema = SchemaFactory.createForClass(Section);
