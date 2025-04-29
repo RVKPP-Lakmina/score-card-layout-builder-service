@@ -7,9 +7,9 @@ import { TemplateModule } from 'src/template/template.module';
 import { TemplateService } from 'src/template/template.service';
 
 @Module({
-    imports: [MongooseModule.forFeature([{ name: Template.name, schema: TemplateSchema }]), TemplateModule],
-    controllers: [TemplateBuilderController],
-    providers: [TemplateBuilderService, TemplateService],
-    exports: [TemplateBuilderService, MongooseModule],
+  imports: [MongooseModule.forFeature([{ name: Template.name, schema: TemplateSchema }]), TemplateModule],
+  controllers: [TemplateBuilderController],
+  providers: [TemplateBuilderService, TemplateService],
+  exports: [TemplateBuilderService, MongooseModule],
 })
 export class TemplateBuilderModule { } 
