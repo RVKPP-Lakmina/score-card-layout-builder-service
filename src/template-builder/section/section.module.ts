@@ -9,6 +9,7 @@ import {
   TemplateSection,
   TemplateSectionSchema,
 } from './model/template-section.schema';
+import { Template, TemplateSchema } from '../template/template.schema';
 
 @Module({
   imports: [
@@ -22,6 +23,8 @@ import {
         name: TemplateSection.name,
         schema: TemplateSectionSchema,
       },
+
+      { name: Template.name, schema: TemplateSchema },
     ]),
     UtilityModule,
   ],

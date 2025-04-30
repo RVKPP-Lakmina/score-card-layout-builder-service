@@ -1,51 +1,82 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { LoggerService } from 'src/logger/app-logger.service';
 import { TemplateSection } from '../model/template-section.schema';
 import { Helpers } from 'src/utility/helpers.utility';
 import { SectionService } from './section.service';
-import { Section } from '../model/section.schema';
+import { Section, SectionDocument } from '../model/section.schema';
+import {
+  Template,
+  TemplateDocument,
+} from 'src/template-builder/template/template.schema';
 
 @Injectable()
 export class TemplateSectionService extends Helpers {
   private readonly loggerContext = 'template-section.service.ts';
   constructor(
     private readonly loggerService: LoggerService,
+    private readonly sectionService: SectionService,
     @InjectModel(TemplateSection.name)
     private templateSectionModel: Model<TemplateSection>,
-    private readonly sectionService: SectionService,
+    @InjectModel(Section.name)
+    private sectionModel: Model<SectionDocument>,
+    @InjectModel(Template.name)
+    private templateModel: Model<TemplateDocument>,
   ) {
     super();
   }
 
-  async addTemplateSections(sectionIds: string[]): Promise<TemplateSection[]> {
-    const allSections: Section[] = await this.sectionService.findAll();
+  async addTemplateSections(
+    templateId: string,
+    sectionIds: string[],
+  ): Promise<TemplateSection[]> {
+    const sections = await this.sectionModel.find({ _id: { $in: sectionIds } });
 
-    const templateSections: TemplateSection[] = [];
-    const sectionIdsSet = new Set();
+    if (sections.length !== sectionIds.length) {
+      throw new NotFoundException('Some section IDs are invalid');
+    }
 
-    for (const sectionId of sectionIds) {
-      const section = allSections.find((s) => s._id === sectionId);
-      if (section) {
-        const _id = this.generateUniqueId();
-
-        sectionIdsSet.add(_id);
-
-        const templateSection = new this.templateSectionModel({
-          _id,
+    const templateSectionDocs: TemplateSection[] =
+      await this.templateSectionModel.insertMany(
+        sections.map((section) => ({
           name: section.name,
           description: section.description,
           overallWeight: 0,
           sectionWeight: 0,
           lastEditedBy: '',
           rules: [],
-        });
-        templateSections.push(templateSection);
-      }
+          parentSectionId: section._id,
+          parentTemplateId: templateId,
+        })),
+      );
+
+    const templateSectionIds: string[] = templateSectionDocs.map(
+      ({ _id }) => _id,
+    );
+
+    const template = await this.templateModel.findById(
+      templateId,
+      {
+        $push: {
+          sectionIds: { $each: templateSectionIds },
+        },
+      },
+      {
+        new: true,
+      },
+    );
+
+    if (!template) {
+      throw new NotFoundException('Template not found');
     }
 
-    return this.templateSectionModel.insertMany(templateSections);
+    return templateSectionDocs;
   }
 
   async createTemplateSection(templateSection: {
