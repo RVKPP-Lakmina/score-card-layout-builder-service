@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { SectionService } from './service/section.service';
+import { SectionService } from '../service/section.service';
 
 @Controller('sections')
 export class SectionController {
