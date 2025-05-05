@@ -16,7 +16,7 @@ import { AuthGuard } from './auth.guard';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
@@ -26,7 +26,7 @@ export class AuthController {
 
   @Post('register')
   async register(@Body() signUpDto: Record<string, string>) {
-    const { name, password } = signUpDto;
+    const { name, password, confirmPassword } = signUpDto;
 
     if (!name || !password) {
       throw new Error('Name and password are required');
@@ -34,9 +34,11 @@ export class AuthController {
     const user: {
       name: string;
       password: string;
+      confirmPassword: string;
     } = {
       name,
       password,
+      confirmPassword
     };
 
     return this.authService.register(user);

@@ -9,23 +9,30 @@ import { User } from 'src/users/users.schema';
 import { UsersService } from 'src/users/users.service';
 import Redis from 'ioredis';
 import { LoggerService } from 'src/logger/app-logger.service';
+import { Helpers } from 'src/utility/helpers.utility';
 @Injectable()
-export class AuthService {
+export class AuthService extends Helpers {
   constructor(
     private readonly loggerService: LoggerService,
     private usersService: UsersService,
     private jwtService: JwtService,
     @InjectRedis() private readonly redis: Redis,
-  ) {}
+  ) { super() }
 
   async signIn(
     username: string,
     pass: string,
-  ): Promise<{ access_token: string }> {
+  ): Promise<{ accessToken: string, status: number }> {
     try {
       const user: User | null = await this.usersService.findOne(username);
 
-      if (user?.password !== pass) {
+      if (!user) {
+        this.loggerService.error('User not found', 'signIn', 'auth.service.ts');
+        throw new UnauthorizedException('User not found');
+      }
+
+      const isMatch = await this.comparePasswords(pass, user.password);
+      if (!isMatch) {
         this.loggerService.error(
           'Invalid credentials',
           'signIn',
@@ -43,7 +50,8 @@ export class AuthService {
       await this.redis.set(`session:${user._id}`, token, 'EX', 60 * 60 * 24);
 
       return {
-        access_token: token,
+        accessToken: token,
+        status: 1,
       };
     } catch {
       this.loggerService.error('Error signing in', 'signIn', 'auth.service.ts');
@@ -55,7 +63,21 @@ export class AuthService {
     await this.redis.del(`session:${userId}`);
   }
 
-  async register(user: { name: string; password: string }): Promise<User> {
+  async register(user: { name: string; password: string, confirmPassword: string }): Promise<User> {
+    const isRegistered: User | null = await this.usersService.findOne(user.name);
+
+    if (isRegistered) {
+      this.loggerService.error('User already exists', 'register', 'auth.service.ts');
+      throw new BadRequestException('User already exists');
+    }
+
+    if (user.password !== user.confirmPassword) {
+      this.loggerService.error('Passwords do not match', 'register', 'auth.service.ts');
+      throw new BadRequestException('Passwords do not match');
+    }
+
+    const hashedPassword = this.hashPassword(user.password);
+    user.password = hashedPassword;
     return this.usersService.create(user);
   }
 }
