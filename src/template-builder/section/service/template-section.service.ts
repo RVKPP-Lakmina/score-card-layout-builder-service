@@ -35,48 +35,69 @@ export class TemplateSectionService extends Helpers {
   async addTemplateSections(
     templateId: string,
     sectionIds: string[],
-  ): Promise<TemplateSection[]> {
-    const sections = await this.sectionModel.find({ _id: { $in: sectionIds } });
+  ): Promise<Map<string, TemplateSection>> {
+    try {
+      const sections = await this.sectionModel
+        .find({ _id: { $in: sectionIds } })
+        .exec();
 
-    if (sections.length !== sectionIds.length) {
-      throw new NotFoundException('Some section IDs are invalid');
-    }
+      if (sections.length !== sectionIds.length) {
+        throw new NotFoundException('Some section IDs are invalid');
+      }
 
-    const templateSectionDocs: TemplateSection[] =
-      await this.templateSectionModel.insertMany(
-        sections.map((section) => ({
-          name: section.name,
-          description: section.description,
-          overallWeight: 0,
-          sectionWeight: 0,
-          lastEditedBy: '',
-          rules: [],
-          parentSectionId: section._id,
-          parentTemplateId: templateId,
-        })),
+      const templateSectionDocs: TemplateSection[] =
+        await this.templateSectionModel.insertMany(
+          sections.map((section) => ({
+            name: section.name,
+            description: section.description,
+            overallWeight: 0,
+            sectionWeight: 0,
+            lastEditedBy: '',
+            rules: [],
+            parentSectionId: section._id,
+            parentTemplateId: templateId,
+          })),
+          { rawResult: false },
+        );
+
+      const templateSectionIds: string[] = templateSectionDocs.map(
+        ({ _id }) => _id,
       );
 
-    const templateSectionIds: string[] = templateSectionDocs.map(
-      ({ _id }) => _id,
-    );
+      const template = await this.templateModel
+        .findById(
+          templateId,
+          {
+            $push: {
+              sectionIds: { $each: templateSectionIds },
+            },
+          },
+          {
+            new: true,
+          },
+        )
+        .exec();
 
-    const template = await this.templateModel.findById(
-      templateId,
-      {
-        $push: {
-          sectionIds: { $each: templateSectionIds },
-        },
-      },
-      {
-        new: true,
-      },
-    );
+      if (!template) {
+        throw new NotFoundException('Template not found');
+      }
 
-    if (!template) {
-      throw new NotFoundException('Template not found');
+      const map = new Map<string, TemplateSection>(
+        templateSectionDocs.map((section) => [section._id, section]),
+      );
+
+      return map;
+    } catch (error) {
+      this.loggerService.error(
+        'Error adding template sections',
+        this.getErrorMessage(error),
+        this.loggerContext,
+      );
+      throw new HttpException(
+        'Error adding template sections',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
-
-    return templateSectionDocs;
   }
 
   async createTemplateSection(templateSection: {

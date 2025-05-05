@@ -3,12 +3,12 @@ import { Document } from 'mongoose';
 
 export type TemplateSectionDocument = TemplateSection & Document;
 
-@Schema({ timestamps: true, _id: true })
+@Schema({ timestamps: true })
 export class TemplateSection {
-  @Prop({ required: false })
+  @Prop({ required: false, unique: true })
   _id: string;
 
-  @Prop({ required: true, unique: true })
+  @Prop({ required: true })
   name: string;
 
   @Prop({

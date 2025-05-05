@@ -5,6 +5,9 @@ export type TemplateDocument = Template & Document;
 
 @Schema({ timestamps: true })
 export class Template {
+  @Prop({ required: true, unique: true })
+  _id: string;
+
   @Prop({ required: true })
   name: string;
 

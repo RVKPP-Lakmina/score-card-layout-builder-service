@@ -10,6 +10,7 @@ import {
   TemplateSectionSchema,
 } from './model/template-section.schema';
 import { Template, TemplateSchema } from '../template/template.schema';
+import { TemplateSectionController } from './controller/template-section.controller';
 
 @Module({
   imports: [
@@ -29,6 +30,6 @@ import { Template, TemplateSchema } from '../template/template.schema';
     UtilityModule,
   ],
   providers: [SectionService, TemplateSectionService],
-  controllers: [SectionController],
+  controllers: [SectionController, TemplateSectionController],
 })
 export class SectionModule {}
