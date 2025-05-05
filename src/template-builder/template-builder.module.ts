@@ -8,9 +8,13 @@ import { TemplateService } from '../template-builder/template/template.service';
 import { SectionModule } from './section/section.module';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Template.name, schema: TemplateSchema }]), TemplateModule, SectionModule],
+  imports: [
+    MongooseModule.forFeature([{ name: Template.name, schema: TemplateSchema }]),
+    TemplateModule,
+    SectionModule,
+  ],
   controllers: [TemplateBuilderController],
   providers: [TemplateBuilderService, TemplateService],
   exports: [TemplateBuilderService, MongooseModule],
 })
-export class TemplateBuilderModule { } 
+export class TemplateBuilderModule { }

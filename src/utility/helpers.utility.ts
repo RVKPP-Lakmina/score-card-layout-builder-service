@@ -1,3 +1,4 @@
+import * as bcrypt from 'bcrypt';
 export class Helpers {
   static generateRandomString(length: number): string {
     const characters =
@@ -22,7 +23,7 @@ export class Helpers {
 
   keyGenarate(sectionName: string): string {
     return sectionName
-      .replace(/[^a-zA-Z\s]/g, '')
+      .replace(/[^a-zA-Z0-9\s]/g, '')
       .toLowerCase()
       .trim()
       .replace(/\s+/g, '-');
@@ -37,5 +38,14 @@ export class Helpers {
     return (
       Date.now().toString(36) + Math.random().toString(36).substring(2, 15)
     );
+  }
+
+  hashPassword(password: string) {
+    const salt = bcrypt.genSaltSync(10);
+    return bcrypt.hashSync(password, salt);
+  }
+
+  comparePasswords(password: string, hash: string) {
+    return bcrypt.compare(password, hash);
   }
 }
