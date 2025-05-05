@@ -1,12 +1,12 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Template, TemplateDocument } from 'src/template-builder/template/template.schema';
+import { Template } from 'src/template-builder/template/template.schema';
 
 @Injectable()
 export class TemplateBuilderService {
     constructor(
-        @InjectModel(Template.name) private readonly templateModel: Model<TemplateDocument>,
+        @InjectModel(Template.name) private readonly templateModel: Model<Template>,
     ) { }
 
     async create(templateDto: Partial<Template>): Promise<Template> {

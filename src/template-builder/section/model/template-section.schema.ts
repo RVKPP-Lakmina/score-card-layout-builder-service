@@ -11,19 +11,32 @@ export class TemplateSection {
   @Prop({ required: true, unique: true })
   name: string;
 
-  @Prop()
+  @Prop({
+    required: true,
+    type: String,
+  })
+  parentSectionId: string;
+
+  @Prop({
+    required: true,
+    type: String,
+    ref: 'Template',
+  })
+  parentTemplateId: string;
+
+  @Prop({ type: String })
   description?: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, type: Number })
   overallWeight: number;
 
-  @Prop({ required: true })
+  @Prop({ required: true, type: Number })
   sectionWeight: number;
 
   @Prop()
   lastEditedBy: string;
 
-  @Prop({ required: true })
+  @Prop({ type: [String], default: [] })
   rules: string[];
 }
 

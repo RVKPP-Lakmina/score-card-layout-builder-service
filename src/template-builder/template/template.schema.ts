@@ -8,6 +8,9 @@ export class Template {
     @Prop({ required: true })
     name: string;
 
+    @Prop({ required: true })
+    _id: string;
+
     @Prop()
     score?: number;
 

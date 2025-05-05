@@ -10,15 +10,10 @@ export class UsersService {
   constructor(
     private readonly loggerService: LoggerService,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
-  ) {}
+  ) { }
 
   async findOne(username: string): Promise<User | null> {
     const user = await this.userModel.findOne({ name: username }).exec();
-
-    if (!user) {
-      this.loggerService.error('User not found', 'findOne', this.fileName);
-      throw new BadRequestException(`User with username ${username} not found`);
-    }
     return user;
   }
 

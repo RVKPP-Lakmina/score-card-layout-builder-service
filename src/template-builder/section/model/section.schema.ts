@@ -12,16 +12,10 @@ export class Section {
   name: string;
 
   @Prop()
-  description: string;
-
-  @Prop()
-  templateId: string;
+  description?: string;
 
   @Prop()
   lastEditedBy: string;
-
-  @Prop()
-  order: number;
 }
 
 export const SectionSchema = SchemaFactory.createForClass(Section);
