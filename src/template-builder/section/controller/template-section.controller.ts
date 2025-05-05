@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { TemplateSectionService } from '../service/template-section.service';
 
 @Controller('templates-sections')
@@ -17,13 +17,24 @@ export class TemplateSectionController {
     return await this.templateSectionService.getTemplateSectionById(id);
   }
 
-  @Get('templates-section/create')
+  @Post('create/:id')
   async createTemplateSection(templateSection: {
     name: string;
     description?: string;
   }) {
     return await this.templateSectionService.createTemplateSection(
       templateSection,
+    );
+  }
+
+  @Post(':id')
+  async addSectionsToTemplate(
+    @Param('id') id: string,
+    @Body('sectionIds') sectionIds: string[],
+  ) {
+    return await this.templateSectionService.addTemplateSections(
+      id,
+      sectionIds,
     );
   }
 }

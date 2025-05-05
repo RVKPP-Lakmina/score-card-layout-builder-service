@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+    Injectable,
+    BadRequestException,
+    NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Template, TemplateDocument } from './template.schema';
@@ -70,11 +74,9 @@ export class TemplateService extends Helpers {
 
 
     async update(id: string, updateDto: Partial<Template>): Promise<Template> {
-        const updatedTemplate = await this.templateModel.findByIdAndUpdate(
-            id,
-            updateDto,
-            { new: true },
-        ).exec();
+        const updatedTemplate = await this.templateModel
+            .findByIdAndUpdate(id, updateDto, { new: true })
+            .exec();
 
         if (!updatedTemplate) {
             throw new NotFoundException(`Template with ID ${id} not found`);

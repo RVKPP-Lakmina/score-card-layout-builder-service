@@ -5,11 +5,11 @@ export type TemplateDocument = Template & Document;
 
 @Schema({ timestamps: true })
 export class Template {
-    @Prop({ required: true })
-    name: string;
+    @Prop({ required: true, unique: true })
+    _id: string;
 
     @Prop({ required: true })
-    _id: string;
+    name: string;
 
     @Prop()
     score?: number;
