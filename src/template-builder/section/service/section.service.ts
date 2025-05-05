@@ -23,24 +23,35 @@ export class SectionService extends Helpers {
     super();
   }
 
-  async findAll(): Promise<Section[]> {
+  async findAll(): Promise<Record<string, Section>> {
     const sections: string | null = await this.redis.get('sections');
+    let allSections: Section[];
 
-    if (sections) {
-      return JSON.parse(sections) as Section[];
+    if (!sections) {
+      allSections = await this.sectionModel.find().exec();
+
+      if (allSections) {
+        await this.redis.set(
+          'sections',
+          JSON.stringify(allSections),
+          'EX',
+          60 * 60,
+        );
+      }
+    } else {
+      allSections = JSON.parse(sections) as Section[];
     }
 
-    const allSections = await this.sectionModel.find().exec();
+    const map = allSections.reduce(
+      (section: Record<string, Section>, item) => {
+        section[item._id] = item;
 
-    if (allSections) {
-      await this.redis.set(
-        'sections',
-        JSON.stringify(allSections),
-        'EX',
-        60 * 60,
-      );
-    }
-    return allSections;
+        return section;
+      },
+      {} as Record<string, Section>,
+    );
+
+    return map;
   }
 
   async getSectionById(sectionId: string): Promise<Section> {
