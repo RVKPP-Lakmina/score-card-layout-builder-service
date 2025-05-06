@@ -1,15 +1,17 @@
-    FROM node:18-alpine
+FROM node:18-alpine
 
-    WORKDIR /app
+WORKDIR /app
 
-    COPY package*.json ./
+COPY package*.json ./
 
-    RUN npm install
+RUN npm install -g pnpm@latest-10
 
-    COPY . .
+RUN pnpm install
 
-    RUN npm run build
+COPY . .
 
-    EXPOSE 3000
+RUN pnpm run build
 
-    CMD ["npm", "run", "start:dev"]
+EXPOSE 3000
+
+CMD ["pnpm", "run", "start:dev"]
