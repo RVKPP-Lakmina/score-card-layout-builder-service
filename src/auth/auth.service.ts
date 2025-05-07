@@ -22,7 +22,7 @@ export class AuthService extends Helpers {
   async signIn(
     username: string,
     pass: string,
-  ): Promise<{ accessToken: string, status: number }> {
+  ): Promise<{ accessToken: string, status: number, user: User }> {
     try {
       const user: User | null = await this.usersService.findOne(username);
 
@@ -51,6 +51,7 @@ export class AuthService extends Helpers {
 
       return {
         accessToken: token,
+        user: user,
         status: 1,
       };
     } catch {
@@ -63,7 +64,7 @@ export class AuthService extends Helpers {
     await this.redis.del(`session:${userId}`);
   }
 
-  async register(user: { name: string; password: string, confirmPassword: string }): Promise<User> {
+  async register(user: { name: string; password: string, confirmPassword: string, }): Promise<{ message: string, status: number }> {
     const isRegistered: User | null = await this.usersService.findOne(user.name);
 
     if (isRegistered) {
@@ -78,6 +79,8 @@ export class AuthService extends Helpers {
 
     const hashedPassword = this.hashPassword(user.password);
     user.password = hashedPassword;
-    return this.usersService.create(user);
+    const newUser = this.usersService.create(user);
+
+    return { message: 'User Created successfully', status: 1 };
   }
 }
