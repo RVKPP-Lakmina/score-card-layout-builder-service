@@ -25,7 +25,7 @@ export class AuthService extends Helpers {
   async signIn(
     username: string,
     pass: string,
-  ): Promise<{ accessToken: string; status: number; user: User }> {
+  ): Promise<{ accessToken: string; status: number; user: string }> {
     try {
       const user: User | null = await this.usersService.findOne(username);
 
@@ -52,7 +52,7 @@ export class AuthService extends Helpers {
 
       return {
         accessToken: token,
-        user: result as User,
+        user: user.name,
         status: 1,
       };
     } catch (error) {
@@ -74,15 +74,25 @@ export class AuthService extends Helpers {
     password: string;
     confirmPassword: string;
   }): Promise<{ message: string; status: number }> {
-    const isRegistered: User | null = await this.usersService.findOne(user.name);
+    const isRegistered: User | null = await this.usersService.findOne(
+      user.name,
+    );
 
     if (isRegistered) {
-      this.loggerService.error('User already exists', 'register', 'auth.service.ts');
+      this.loggerService.error(
+        'User already exists',
+        'register',
+        'auth.service.ts',
+      );
       throw new BadRequestException('User already exists');
     }
 
     if (user.password !== user.confirmPassword) {
-      this.loggerService.error('Passwords do not match', 'register', 'auth.service.ts');
+      this.loggerService.error(
+        'Passwords do not match',
+        'register',
+        'auth.service.ts',
+      );
       throw new BadRequestException('Passwords do not match');
     }
 
