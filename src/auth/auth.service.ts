@@ -10,6 +10,7 @@ import { UsersService } from 'src/users/users.service';
 import Redis from 'ioredis';
 import { LoggerService } from 'src/logger/app-logger.service';
 import { Helpers } from 'src/utility/helpers.utility';
+
 @Injectable()
 export class AuthService extends Helpers {
   constructor(
