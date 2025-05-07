@@ -1,4 +1,4 @@
-import * as bcrypt from 'bcryptjs';
+import * as bcrypt from 'bcrypt';
 export class Helpers {
   static generateRandomString(length: number): string {
     const characters =
