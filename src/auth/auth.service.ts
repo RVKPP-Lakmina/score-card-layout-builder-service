@@ -10,6 +10,7 @@ import { UsersService } from 'src/users/users.service';
 import Redis from 'ioredis';
 import { LoggerService } from 'src/logger/app-logger.service';
 import { Helpers } from 'src/utility/helpers.utility';
+import { HistoryService } from 'src/history/history.service';
 
 @Injectable()
 export class AuthService extends Helpers {
@@ -17,6 +18,7 @@ export class AuthService extends Helpers {
     private readonly loggerService: LoggerService,
     private usersService: UsersService,
     private jwtService: JwtService,
+    private readonly historyService: HistoryService,
     @InjectRedis() private readonly redis: Redis,
   ) {
     super();
@@ -73,7 +75,8 @@ export class AuthService extends Helpers {
     name: string;
     password: string;
     confirmPassword: string;
-  }): Promise<{ message: string; status: number }> {
+
+  }, username: string): Promise<{ message: string; status: number }> {
     const isRegistered: User | null = await this.usersService.findOne(user.name);
 
     if (isRegistered) {
@@ -91,6 +94,18 @@ export class AuthService extends Helpers {
       name: user.name,
       password: hashedPassword,
     });
+
+    // Example usage in any service/controller
+
+    await this.historyService.history({
+      action: 'Create',
+      entityType: 'User',
+      entityName: `${name}`,
+      timestamp: new Date(),
+      user: username,
+      details: `Registered a new user with email: ${""}`,
+    });
+
 
     return {
       message: 'User created successfully',

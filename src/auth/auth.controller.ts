@@ -13,7 +13,8 @@ import {
 import { AuthService } from './auth.service';
 import { User } from 'src/users/users.schema';
 import { AuthGuard } from './auth.guard';
-
+import { currentUser } from './user.decorator';
+@UseGuards(AuthGuard)
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) { }
@@ -25,12 +26,13 @@ export class AuthController {
   }
 
   @Post('register')
-  async register(@Body() signUpDto: Record<string, string>) {
+  async register(@Body() signUpDto: Record<string, string>, @currentUser('username') username: string) {
     const { name, password, confirmPassword } = signUpDto;
 
     if (!name || !password) {
       throw new Error('Name and password are required');
     }
+
     const user: {
       name: string;
       password: string;
@@ -41,10 +43,9 @@ export class AuthController {
       confirmPassword
     };
 
-    return this.authService.register(user);
+    return this.authService.register(user, username);
   }
 
-  @UseGuards(AuthGuard)
   @Post('logout')
   async signOut(@Request() req: Request & { user: User }) {
     const userId = req.user._id || req.user.name;
@@ -54,7 +55,6 @@ export class AuthController {
     await this.authService.signOut(userId);
   }
 
-  @UseGuards(AuthGuard)
   @Get('profile')
   getProfile(@Request() req: Request & { user: User }) {
     return req.user;
