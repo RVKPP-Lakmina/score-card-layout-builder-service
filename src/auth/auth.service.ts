@@ -80,12 +80,20 @@ export class AuthService extends Helpers {
     const isRegistered: User | null = await this.usersService.findOne(user.name);
 
     if (isRegistered) {
-      this.loggerService.error('User already exists', 'register', 'auth.service.ts');
+      this.loggerService.error(
+        'User already exists',
+        'register',
+        'auth.service.ts',
+      );
       throw new BadRequestException('User already exists');
     }
 
     if (user.password !== user.confirmPassword) {
-      this.loggerService.error('Passwords do not match', 'register', 'auth.service.ts');
+      this.loggerService.error(
+        'Passwords do not match',
+        'register',
+        'auth.service.ts',
+      );
       throw new BadRequestException('Passwords do not match');
     }
 
