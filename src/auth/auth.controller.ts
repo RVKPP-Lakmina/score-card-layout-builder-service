@@ -12,9 +12,9 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { User } from 'src/users/users.schema';
-import { AuthGuard } from './auth.guard';
+// import { AuthGuard } from './auth.guard';
 import { currentUser } from './user.decorator';
-@UseGuards(AuthGuard)
+
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) { }
@@ -26,25 +26,28 @@ export class AuthController {
   }
 
   @Post('register')
-  async register(@Body() signUpDto: Record<string, string>, @currentUser('username') username: string) {
-    const { name, password, confirmPassword } = signUpDto;
+  async register(
+    @Body() signUpDto: Record<string, string>,
+    @currentUser('username') username: string
+  ) {
+    const { name, password, confirmPassword, email, userType, userGroupId } = signUpDto;
 
-    if (!name || !password) {
-      throw new Error('Name and password are required');
+    if (!name || !password || !email || !userType) {
+      throw new Error('Name, password, email, and user type are required');
     }
 
-    const user: {
-      name: string;
-      password: string;
-      confirmPassword: string;
-    } = {
+    const user = {
       name,
       password,
-      confirmPassword
+      confirmPassword,
+      email,
+      userType,
+      userGroupId,
     };
 
     return this.authService.register(user, username);
   }
+
 
   @Post('logout')
   async signOut(@Request() req: Request & { user: User }) {

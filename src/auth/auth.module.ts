@@ -7,6 +7,7 @@ import { jwtConstants } from './auth.constants';
 import { ConfigModule } from '@nestjs/config';
 import { HistoryService } from 'src/history/history.service';
 import { HistoryModule } from 'src/history/history.module';
+import { HttpModule } from '@nestjs/axios';
 @Module({
   imports: [
     UsersModule,
@@ -17,8 +18,9 @@ import { HistoryModule } from 'src/history/history.module';
     }),
     HistoryModule,
     ConfigModule.forRoot(),
+    HttpModule
   ],
   controllers: [AuthController],
   providers: [AuthService],
 })
-export class AuthModule {}
+export class AuthModule { }

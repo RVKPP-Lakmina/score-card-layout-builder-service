@@ -10,9 +10,10 @@ import { LoggerModule } from './logger/logger.module';
 import { TemplateModule } from './template-builder/template/template.module';
 import { TemplateBuilderModule } from './template-builder/template-builder.module';
 import { ProductModule } from './product/product.module';
+import { UserGroupModule } from './user-group/user-group.module';
 
 @Module({
-  imports: [LoggerModule, ConnectionsModule, AuthModule, TemplateBuilderModule, ProductModule, TemplateModule],
+  imports: [LoggerModule, ConnectionsModule, AuthModule, TemplateBuilderModule, ProductModule, TemplateModule, UserGroupModule],
   controllers: [AppController, TemplateBuilderController],
   providers: [AppService, TemplateBuilderService, TemplateService],
 })
