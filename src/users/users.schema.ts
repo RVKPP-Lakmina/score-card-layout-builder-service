@@ -13,6 +13,22 @@ export class User {
 
   @Prop()
   password: string;
+
+  @Prop()
+  email: string;
+
+  @Prop()
+  userType: string;
+
+  @Prop({ required: false })
+  userGroupId?: string;
+
+  @Prop({ default: true })
+  isActive: boolean;
+
+  @Prop({ type: Date, default: null })
+  lastLoginAt: Date | null;
+
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
