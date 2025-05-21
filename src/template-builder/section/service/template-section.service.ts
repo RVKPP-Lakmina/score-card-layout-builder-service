@@ -35,7 +35,11 @@ export class TemplateSectionService extends Helpers {
   async addTemplateSections(
     templateId: string,
     sectionIds: string[],
-  ): Promise<Map<string, TemplateSection>> {
+  ): Promise<{
+    data: TemplateSection[] | null;
+    status: number;
+    message?: string;
+  }> {
     try {
       const sections = await this.sectionModel
         .find({ _id: { $in: sectionIds } })
@@ -82,21 +86,22 @@ export class TemplateSectionService extends Helpers {
         throw new NotFoundException('Template not found');
       }
 
-      const map = new Map<string, TemplateSection>(
-        templateSectionDocs.map((section) => [section._id, section]),
-      );
-
-      return map;
+      return {
+        data: templateSectionDocs,
+        status: 1,
+        message: 'Template sections added successfully',
+      };
     } catch (error) {
       this.loggerService.error(
         'Error adding template sections',
         this.getErrorMessage(error),
         this.loggerContext,
       );
-      throw new HttpException(
-        'Error adding template sections',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      return {
+        data: [] as TemplateSection[],
+        status: -1,
+        message: 'Error adding template sections',
+      };
     }
   }
 
@@ -138,16 +143,35 @@ export class TemplateSectionService extends Helpers {
     }
   }
 
-  async getTemplateSectionById(id: string): Promise<TemplateSection | null> {
+  async getTemplateSectionById(id: string): Promise<{
+    data: TemplateSection | null;
+    status: number;
+    message?: string;
+  }> {
     try {
-      return await this.templateSectionModel.findById(id).exec();
+      const templateSection = await this.templateSectionModel
+        .findById(id)
+        .exec();
+
+      if (!templateSection) {
+        throw new NotFoundException('Template section not found');
+      }
+
+      return {
+        data: templateSection,
+        status: 1,
+      };
     } catch (error) {
       this.loggerService.error(
         'Error fetching template section',
         this.getErrorMessage(error),
         this.loggerContext,
       );
-      throw error;
+      return {
+        data: {} as TemplateSection,
+        status: -1,
+        message: 'Template section not found',
+      };
     }
   }
 

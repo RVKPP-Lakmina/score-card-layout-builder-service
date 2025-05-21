@@ -8,6 +8,9 @@ export class TemplateSection {
   @Prop({ required: false, unique: true })
   _id: string;
 
+  @Prop({ required: false, unique: true })
+  id: string;
+
   @Prop({ required: true })
   name: string;
 
