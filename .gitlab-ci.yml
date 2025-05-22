@@ -2,7 +2,7 @@ stages:
   - build
 
 variables:
-  IMAGE_NAME: $CI_REGISTRY/l1654/apply-easy/apply-easy-web-portal
+  IMAGE_NAME: $CI_REGISTRY/l1654/smart-score/smart-score-back-end
 
 default:
   image: docker:latest
